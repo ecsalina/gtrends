@@ -4,7 +4,7 @@ setup(
 	name="gtrends",
 	version = "0.1a",
 	py_modules = ["gtrends", "_login"],
-	description = "Automated Google Trends downloader and compiler.",
+	description = "Automated Google Trends downloader.",
 	author = "Eric Salina",
 	author_email = "ecsalina@gmail.com",
 	url = "",

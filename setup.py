@@ -7,7 +7,7 @@ setup(
 	description = "Automated Google Trends downloader.",
 	author = "Eric Salina",
 	author_email = "ecsalina@gmail.com",
-	url = "",
+	url = "https://github.com/ecsalina/gtrends",
 	license = "MIT",
 	long_description = open("README.rst").read(),
 

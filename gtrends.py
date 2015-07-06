@@ -2,10 +2,8 @@ import os
 import time
 import csv
 import datetime
-import webbrowser
-from bs4 import BeautifulSoup
-import requests
 import math
+
 from _login import Downloader
 
 

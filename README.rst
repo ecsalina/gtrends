@@ -22,7 +22,7 @@ gtrends only contains one function, ``collectTrends()``. It can be used by the f
 
 	trends = gtrends.collectTrends(username, password, terms, startDt, endDt)
 
-where ``trends`` is a list of lists, with data::
+where ``trends`` is a list of lists, downloaded with data::
 
 	date,foo,bar,baz
 	1/1/2015,16.667,83.333,16.667
@@ -80,7 +80,7 @@ Please create an issue in the `issue tracker`.
 
 License
 =======
-MIT License::
+MIT License
 	
 	Copyright (c) 2015 Eric Salina
 

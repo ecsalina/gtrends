@@ -2,7 +2,7 @@
 gtrends
 =======
 
-gtrends is a python library that eases the process of downloading Google Trend data. `Google Trends <http://www.google.com/trends>`_ is a service offered by Google which allows access to aggregate query volume data for specific search terms, over specific periods of time. This volume data is represented as a fraction of the total query volume on the given day or week.
+gtrends is a Python library that eases the process of downloading Google Trend data. `Google Trends <http://www.google.com/trends>`_ is a service offered by Google which allows access to aggregate query volume data for specific search terms, over specific periods of time. This volume data is represented as a fraction of the total query volume on the given day or week.
 
 Users with Google accounts can download these data into csv files, however there are several caveats which make the data difficult to process. The data only come in daily granularity up until 3 months worth of data, after which they become weekly. Even worse, Google normalizes the data, so that the largest percent query volume in the time series is set to an integer '100,' with all other values set to smaller integer values. This makes it difficult, for example, to collect several files and splice them together (such as to maintain a daily granularity via shorter time periods), since the data are on difference scales.
 
@@ -90,4 +90,4 @@ MIT License
 
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Data Source: Google Correlate (http://www.google.com/trends)
+Data Source: Google Trends (http://www.google.com/trends)

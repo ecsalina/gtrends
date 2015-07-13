@@ -16,7 +16,7 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 	Args:
 		username: A string representing a Google username.
 		password: A string representing the corresponding Google password.
-		terms: A list of strings whose query volume is to be searched
+		terms: A tuple of strings whose query volume is to be searched
 		startDt: A datetime object for the start of the period (inclusive).
 			Only the month and year are considered.
 		endDt: A datetime object for the end of the period (exclusive).
@@ -25,7 +25,6 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 			This can be: 'd'-> daily, or 'w'-> weekly.
 		sum: Sum values of multiple terms by day/week before normalizing.
 		savePath: A string for the file path where the data can be saved
-		delete: Deletes downloaded csv files automatically if True.
 
 	Returns:
 		A list where each line is a list of format:
@@ -45,7 +44,10 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 		print("Error: Google Trends does not provide data before 2004, your start date was: "+str(startDt))
 		return []
 	if endDt > datetime.datetime.today():
-		print("Error: Google Trends cannot see the future, your end date is later than today: "+str(endDt))
+		print("Error: Google Trends cannot see the future, your end date is : "+str(endDt)", which is later than today")
+		return []
+	if not terms:
+		print("Error: terms tuple is empty, please provide a populated tuple")
 		return []
 
 	#All set to download files:
@@ -79,7 +81,7 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 			report = _prepTrends(rawReport, startDt, numFiles, countMonth, granularity)
 			#if there is nothing in the report data, then return empty list.
 			if not report:
-				print("Error: one file was empty.")
+				print("Error: one file was unable to be downloaded.")
 				return []
 
 			reportData.append(report)

@@ -9,7 +9,7 @@ class Downloader(object):
     """
     Provides an object to easily log into Google.
 
-    This code is modified from the original snippet by Greb Roberts at
+    This code is modified from the original snippet by Greg Roberts at
     https://gist.github.com/gregroberts/11001277, discovered through the useful
     reddit post here http://www.reddit.com/r/Python/comments/233a0c/trying_to_download_google_trends_data/.
     """

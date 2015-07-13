@@ -22,7 +22,8 @@ gtrends only contains one function, ``collectTrends()``. It can be used by the f
 
 	trends = gtrends.collectTrends(username, password, terms, startDt, endDt)
 
-where ``trends`` is a list of lists, downloaded with data::
+
+``collectTrends()`` returns a 2d list of the data, of format [datetime, val0, val1, val2, etc.], and a header. For example, the above code snippet returns the list, ``trends``, as::
 
 	date,foo,bar,baz
 	1/1/2015,16.667,83.333,16.667
@@ -43,6 +44,8 @@ where ``trends`` is a list of lists, downloaded with data::
 
 The dates are of type datetime, and the numbers are floats rounded to 3 decimal places.
 
+The data is normalized across the entire time period and between terms such that the largest value has a float of 100.0, and all other values are scaled accordingly.
+
 
 Advanced Usage
 ==============
@@ -57,6 +60,19 @@ Sum
 SavePath
 ------------------
 ``savePath`` takes a string for a path to save the resultant csv. If left as the default ``None``, no file is saved.
+
+Advanced Usage Example::
+----------------------
+
+	username = "myGoogleUsername"
+	password = "myGooglePassword"
+
+	terms = ["foo", "bar", "baz"]
+	startDt = datetime.datetime(year=2015, month=1, day=1)
+	endDt = datetime.datetime(year=2015, month=2, day=1)
+
+	trends = gtrends.collectTrends(username, password, terms, startDt, endDt,
+									granularity='w', sum=True, savePath="myDir/data.csv")
 
 
 Note

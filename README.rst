@@ -61,8 +61,9 @@ SavePath
 ------------------
 ``savePath`` takes a string for a path to save the resultant csv. If left as the default ``None``, no file is saved.
 
-Advanced Usage Example::
+Advanced Usage Example
 ----------------------
+::
 
 	username = "myGoogleUsername"
 	password = "myGooglePassword"

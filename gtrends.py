@@ -11,12 +11,12 @@ from _login import Downloader
 def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 					sum=False, savePath=None):
 	"""
-	Downloads normalized Google trend data between startDt and endDt.
+	Downloads normalized Google trend data between [startDt, endDt).
 
 	Args:
 		username: A string representing a Google username.
 		password: A string representing the corresponding Google password.
-		terms: A tuple of strings whose query volume is to be searched
+		terms: A tuple of strings whose query volume is to be searched.
 		startDt: A datetime object for the start of the period (inclusive).
 			Only the month and year are considered.
 		endDt: A datetime object for the end of the period (exclusive).
@@ -40,17 +40,21 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 	if granularity != 'd' and granularity != 'w':
 		print("Error: Granularity must be 'd' or 'w,' not "+granularity)
 		return []
+	if startDt > endDt:
+		print("Error: startDt must come earlier in time than endDt")
+		return []
 	if startDt < datetime.datetime(month=01, day=01, year=2004):
 		print("Error: Google Trends does not provide data before 2004, your start date was: "+str(startDt))
 		return []
 	if endDt > datetime.datetime.today():
-		print("Error: Google Trends cannot see the future, your end date is : "+str(endDt)", which is later than today")
+		print("Error: Google Trends cannot see the future, your end date is : "
+				+str(endDt)+", which is later than today")
 		return []
 	if not terms:
 		print("Error: terms tuple is empty, please provide a populated tuple")
 		return []
 
-	#All set to download files:
+	#all set to download files:
 	else:
 		#Note: Always overlap by 1 month (which is why count = freq-1 ).
 		if granularity == "d":
@@ -112,6 +116,67 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 			_save(savePath, finalTrend)
 
 		return finalTrend
+
+
+
+
+def collectRawTrends(username, password, terms, startDt, endDt, savePath=None):
+	"""
+	Downloads raw Google Trends data.
+
+	The most basic download function. Simply downloads the raw csv file from
+	Google Trends as a string. No transformations are performed on any of the
+	data.
+
+	Args:
+		username: A string representing a Google username.
+		password: A string representing the corresponding Google password.
+		terms: A tuple of strings whose query volume is to be searched. Google
+			only accepts 5 terms per query.
+		startDt: A datetime object for the start of the period (inclusive).
+			Only the month and year are considered.
+		endDt: A datetime object for the end of the period (exclusive).
+			Only the month and year are considered.
+		savePath: A string for the file path where the data can be saved
+
+	Returns:
+		A string representing the downloaded csv.
+
+	"""
+	#General checks:
+	if startDt > endDt:
+		print("Error: startDt must come earlier in time than endDt")
+		return []
+	if startDt < datetime.datetime(month=01, day=01, year=2004):
+		print("Error: Google Trends does not provide data before 2004, your start date was: "+str(startDt))
+		return []
+	if endDt > datetime.datetime.today():
+		print("Error: Google Trends cannot see the future, your end date is : "
+				+str(endDt)+", which is later than today")
+		return []
+	if not terms:
+		print("Error: terms tuple is empty, please provide a populated tuple")
+		return []
+	if len(terms) > 5:
+		print("Error: Google Trends only accepts 5 terms at a time")
+		return []
+
+	#all set to download files:
+	else:
+		numYears = endDt.year - startDt.year
+		numMonths = endDt.month - startDt.month
+		numMonths += numYears*12
+
+		report = _downloadReport(username, password, terms, startDt, endDt, 1, 0, str(numMonths)+"m")
+		if not report:
+			print("Error: file was unable to be downloaded.")
+			return []
+		else:
+			if savePath != None:
+				_save(savePath, report)
+
+			return report
+
 
 
 

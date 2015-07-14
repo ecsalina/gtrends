@@ -4,14 +4,17 @@ gtrends
 
 gtrends is a Python library that eases the process of downloading Google Trend data. `Google Trends <http://www.google.com/trends>`_ is a service offered by Google which allows access to aggregate query volume data for specific search terms, over specific periods of time. This volume data is represented as a fraction of the total query volume on the given day or week.
 
-Users with Google accounts can download these data into csv files, however there are several caveats which make the data difficult to process. The data only come in daily granularity up until 3 months worth of data, after which they become weekly. Even worse, Google normalizes the data, so that the largest percent query volume in the time series is set to an integer '100,' with all other values set to smaller integer values. This makes it difficult, for example, to collect several files and splice them together (such as to maintain a daily granularity via shorter time periods), since the data are on difference scales.
+Users with Google accounts can download these data into csv files, however there are several caveats which make the data difficult to process. The data only come in daily granularity up until 3 months worth of data, after which they become weekly. Even worse, Google normalizes the data, so that the largest percent query volume in the time series is set to an integer '100,' with all other values set to smaller integer values. This makes it difficult, for example, to collect several files and splice them together (such as to maintain a daily granularity via files of shorter time periods), since the data are on difference scales.
 
-gtrends solves this by allowing developers to extract data with either weekly or daily granularity, on the same timescale, and most importantly, with the same over-all scale.
+gtrends solves this by allowing developers to extract data with either weekly or daily granularity, with the same scaling throughout, without the need to worry over scaling and data manipulation themselves.
 
 Usage
 =====
 
-gtrends only contains one function, ``collectTrends()``. It can be used by the following::
+gtrends only contains two functions, the primary one being ``collectTrends()``. It can be used by the following::
+
+	import datetime
+	import gtrends
 
 	username = "myGoogleUsername"
 	password = "myGooglePassword"
@@ -23,7 +26,7 @@ gtrends only contains one function, ``collectTrends()``. It can be used by the f
 	trends = gtrends.collectTrends(username, password, terms, startDt, endDt)
 
 
-``collectTrends()`` returns a 2d list of the data, of format [datetime, val0, val1, val2, etc.], and a header. For example, the above code snippet returns the list, ``trends``, as::
+``collectTrends()`` returns a 2d list of the data, of format [datetime, val0, val1, val2, etc.], with an additional a header. For example, the above code snippet returns the list, ``trends``, as follows::
 
 	date,foo,bar,baz
 	1/1/2015,16.667,83.333,16.667
@@ -43,8 +46,8 @@ gtrends only contains one function, ``collectTrends()``. It can be used by the f
 	1/31/2015,16.667,100.00,16.667
 
 The dates are of type datetime, and the numbers are floats rounded to 3 decimal places.
-
 The data is normalized across the entire time period and between terms such that the largest value has a float of 100.0, and all other values are scaled accordingly.
+Data is returned from [startDt, endDt), to the accuracy of the month (i.e. the specific day within the month does not matter).
 
 
 Advanced Usage
@@ -65,6 +68,9 @@ Advanced Usage Example
 ----------------------
 ::
 
+	import datetime
+	import gtrends
+
 	username = "myGoogleUsername"
 	password = "myGooglePassword"
 
@@ -73,12 +79,30 @@ Advanced Usage Example
 	endDt = datetime.datetime(year=2015, month=2, day=1)
 
 	trends = gtrends.collectTrends(username, password, terms, startDt, endDt,
-									granularity='w', sum=True, savePath="myDir/data.csv")
-
+			granularity='w', sum=True, savePath="myDir/data.csv")
 
 Note
 ====
-When the data is normalized at the end, this is done by the largest value, across all terms (if more than one). Therefore all term values are to scale between terms.
+The data is normalized at the end across all terms (if more than one), such that the largest value in the entire array is set to 100.0. Therefore, all term values are to scale between terms.
+
+Raw Data
+========
+The secondary function ``collectRawTrends()`` allows you to collect the raw csv from Google Trends as a string::
+
+	import datetime
+	import gtrends
+	
+	username = "myGoogleUsername"
+	password = "myGooglePassword"
+
+	terms = ["foo", "bar", "baz"]
+	startDt = datetime.datetime(year=2015, month=1, day=1)
+	endDt = datetime.datetime(year=2015, month=2, day=1)
+
+	trends = gtrends.collectRawTrends(username, password, terms, startDt, endDt,
+			savePath="myDir/data.csv")
+
+In this case, the granularity cannot be set: it is daily or weekly based on what Google naturally returns. The number of terms is limited to 5 (which is the max Google itself allows per csv file) and sumation is not supported (as in the optional argument ``sum`` in ``collectTrends()``). In addition, the regional data and related term data is included, rather than being discarded in ``collectTrends()``.
 
 Installing
 ==========
@@ -93,7 +117,7 @@ This has so far only been tested on Python 2.7.
 
 Issues
 ======
-Please create an issue in the `issue tracker`.
+Please create an issue in the issue tracker.
 
 License
 =======

@@ -9,7 +9,7 @@ with open(path.join(here, 'README.rst')) as f:
 
 setup(
 	name="gtrends",
-	version = "0.1b",
+	version = "0.1",
 	py_modules = ["gtrends", "_login"],
 	description = "Automated Google Trends downloader.",
 	author = "Eric Salina",
@@ -19,7 +19,7 @@ setup(
 	long_description = long_description,
 
 	classifiers = [
-		"Development Status :: 4 - Beta",
+		"Development Status :: 5 - Production/Stable",
 		"Intended Audience :: Developers",
 		"Topic :: Utilities",
 		"License :: OSI Approved :: MIT License",

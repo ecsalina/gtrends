@@ -11,12 +11,13 @@ setup(
 	name="gtrends",
 	version = "0.1",
 	py_modules = ["gtrends", "_login"],
-	description = "Automated Google Trends downloader.",
+	description = "Automated Google Trends downloader",
 	author = "Eric Salina",
 	author_email = "ecsalina@gmail.com",
 	url = "https://github.com/ecsalina/gtrends",
 	license = "MIT",
 	long_description = long_description,
+	keywords = ['Google', 'Trends', 'API', 'gtrends'],
 
 	classifiers = [
 		"Development Status :: 5 - Production/Stable",

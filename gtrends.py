@@ -247,7 +247,7 @@ def _downloadReport(username, password, terms, startDt, endDt,
 def _prepTrends(rawReport, startDt, numFiles, countMonth, granularity):
 	"""
 	Helper function which reformats data into list of lists with correct data
-	types. If anything is empty or has incorrectl data, then an empty list is
+	types. If anything is empty or has incorrect data, then an empty list is
 	returned.
 	"""
 	#load each rawReport into separate list
@@ -284,7 +284,7 @@ def _prepTrends(rawReport, startDt, numFiles, countMonth, granularity):
 					dt = line[0][:-13]
 					dt = datetime.datetime.strptime(dt, "%Y-%m-%d")
 
-				finalMonth = startDt.month + i*countMonth + 1	#would just use % operator for this
+				finalMonth = startDt.month + (i+1)*countMonth	#would just use % operator for this
 				while finalMonth > 12:							#however it doesn't work bc the range
 					finalMonth -= 12							#runs from 1-12, not 0-11
 

@@ -45,7 +45,7 @@ class Downloader(object):
         self.opener = urllib2.build_opener(cook)
         self.opener.addheaders = self.headers
         
-        galx = re.compile('<input name="GALX"[\s]+type="hidden"[\s]+value="(?P<galx>[a-zA-Z0-9_-]+)">')
+        galx = re.compile('<input type="hidden"[\s]+name="GALX"[\s]+value="(?P<galx>[a-zA-Z0-9_-]+)">')
         resp = self.opener.open(self.url_ServiceLoginBoxAuth).read()
         resp = re.sub(r'\s\s+', ' ', resp)
         m = galx.search(resp)

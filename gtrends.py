@@ -3,6 +3,7 @@ import time
 import csv
 import datetime
 import math
+from fractions import *
 
 from _login import Downloader
 
@@ -74,21 +75,37 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 		#Packages terms into lists of 5 (the max that can be
 		#queried at once).
 		segmentedTerms = _packTerms(terms)
-
-
 		reportData = []
 
-		for segTerms in segmentedTerms:
-			#download each 2m file csv as a string
-			rawReport = _downloadReport(username, password, segTerms, startDt, endDt, numFiles, countMonth, freq)
-			#format rawReport into list of each multi-month list.
-			report = _prepTrends(rawReport, startDt, numFiles, countMonth, granularity)
-			#if there is nothing in the report data, then return empty list.
-			if not report:
-				print("Error: one file was unable to be downloaded.")
-				return []
 
-			reportData.append(report)
+
+
+
+
+		###########DEBBBBUUUUUUUUGGGGGG DEBUG
+		import os.path
+		import pickle
+		if os.path.exists("reportData4.dat"):
+			reportData = pickle.load(open("reportData4.dat"))
+		else:
+			#normal below
+			for segTerms in segmentedTerms:
+				#download each 2m file csv as a string
+				rawReport = _downloadReport(username, password, segTerms, startDt, numFiles, countMonth, freq)
+				#format rawReport into list of each multi-month list.
+				report = _prepTrends(rawReport, startDt, numFiles, countMonth, granularity)
+				#if there is nothing in the report data, then return empty list.
+				if not report:
+					print("Error: one file was unable to be downloaded.")
+					return []
+
+				reportData.append(report)
+			pickle.dump(reportData, open("reportData4.dat", "w"))
+		#############################################END DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
 
 		#if, in the same period, between two sets, the added constant
 		#term changes scale, then we must scale the second set to meet
@@ -210,8 +227,8 @@ def _packTerms(terms):
 
 
 
-def _downloadReport(username, password, terms, startDt, endDt,
-					numFiles, countMonth, freq):
+def _downloadReport(username, password, terms, startDt, numFiles,
+					countMonth, freq):
 	"""
 	Helper function to actually downloading Google trend data.
 	Must have a maximum of FIVE terms.
@@ -341,7 +358,7 @@ def _scaleRep(reportData):
 	time, a secondary report contains a term which is larger than the constant
 	term and so causes the constant to have different values, then the scale is
 	off. To fix this, we select a value for the constant term at the same time
-	across the new and old reports. factor = old / new, and multiple factor
+	across the new and old reports. factor = old / new, and multiply factor
 	across the new report to have the same scale as the old one.
 	"""
 	baseMonth = reportData[0][0]
@@ -408,7 +425,7 @@ def _calcPerc(numFiles, report):
 				#to avoid divide-by-zero error, set all 0's in data to 1's
 				line[k] = 1.0 if line[k] == 0.0 else line[k]
 				prevLine[k] = 1.0 if prevLine[k] == 0.0 else prevLine[k]
-				perc = float(line[k]) / float(prevLine[k])
+				perc = Fraction(line[k], prevLine[k])
 				newLine.append(perc)
 			percTrend.append(newLine)
 
@@ -422,14 +439,13 @@ def _reformTrend(percs, inits):
 	Helper function to recreate original trend based on percent change data.
 	"""
 	trend = []
-	#DEBUG
-	trend.append(inits)
+	trend.append(percs[0])
 
 	for i in range(1, len(percs)):
 		newLine = []
-		newLine.append(percs[i][0])
-		for j in range(1, len(percs[i])):
-			level = trend[i-1][j] * percs[i][j]
+		newLine.append(percs[i][0])				#append the date
+		for j in range(1, len(percs[i])):		#for each term on date
+			level = float(trend[i-1][j]) * percs[i][j].numerator / percs[i][j].denominator	#level is the prev level * %change
 			newLine.append(level)
 
 		trend.append(newLine)
@@ -473,8 +489,8 @@ def _normalize(data):
 		newLine = []
 		newLine.append(line[0])
 		for j in range(1, len(line)):
-			norm = line[j]/maxVal
-			norm *= 100
+			norm = line[j]*100
+			norm /= maxVal
 			norm = round(norm, 3)
 			newLine.append(norm)
 

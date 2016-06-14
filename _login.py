@@ -1,9 +1,17 @@
-import httplib
-import urllib
-import urllib2 
 import re
 import logging
-from cookielib import CookieJar
+try:
+    import urllib.request as urllib2
+except ImportError:
+    import urllib2
+try:
+    import urllib.parse as urllib
+except ImportError:
+    import urllib
+try:
+    from http.cookiejar import CookieJar
+except ImportError:
+    from cookielib import CookieJar
  
 class Downloader(object):
     """
@@ -46,12 +54,12 @@ class Downloader(object):
         self.opener.addheaders = self.headers
         
         galx = re.compile('<input type="hidden"[\s]+name="GALX"[\s]+value="(?P<galx>[a-zA-Z0-9_-]+)">')
-        resp = self.opener.open(self.url_ServiceLoginBoxAuth).read()
+        resp = str(self.opener.open(self.url_ServiceLoginBoxAuth).read())
         resp = re.sub(r'\s\s+', ' ', resp)
         m = galx.search(resp)
 
         self.login_params['GALX'] = m.group('galx')
-        params = urllib.urlencode(self.login_params)
+        params = urllib.urlencode(self.login_params).encode("utf-8")
         self.opener.open(self.url_ServiceLoginBoxAuth, params)
         self.opener.open(self.url_CookieCheck)
         self.opener.open(self.url_PrefCookie)
@@ -61,7 +69,7 @@ class Downloader(object):
         """
         Returns original raw csv file as a one large string.
         """
-        data = self.opener.open(query).read()
+        data = self.opener.open(query).read().decode()
         
         if data in ['You must be signed in to export data from Google Trends']:
             logging.error('You must be signed in to export data from Google Trends')

@@ -7,9 +7,15 @@ from fractions import *
 
 from _login import Downloader
 
+#DEBUG
+"""
+geo= location around world (DE, germany, etc)
+gprop= type of search(news, image, etc) nothing for web
+cat= category (law & gov, finance, etc. numbered)
+"""
 
 
-def collectTrends(username, password, terms, startDt, endDt, granularity='d',
+def collectTrends(username, password, terms, startDt, endDt, granularity='d', geo='', gprop='', news='',
 					sum=False, savePath=None):
 	"""
 	Downloads normalized Google trend data between [startDt, endDt).
@@ -44,7 +50,7 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 	if startDt > endDt:
 		print("Error: startDt must come earlier in time than endDt")
 		return []
-	if startDt < datetime.datetime(month=01, day=01, year=2004):
+	if startDt < datetime.datetime(month=1, day=1, year=2004):
 		print("Error: Google Trends does not provide data before 2004, your start date was: "+str(startDt))
 		return []
 	if endDt > datetime.datetime.today():
@@ -85,8 +91,8 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 		###########DEBBBBUUUUUUUUGGGGGG DEBUG
 		import os.path
 		import pickle
-		if os.path.exists("reportData4.dat"):
-			reportData = pickle.load(open("reportData4.dat"))
+		if os.path.exists("reportData7.dat"):
+			reportData = pickle.load(open("reportData7.dat", "rb"))
 		else:
 			#normal below
 			for segTerms in segmentedTerms:
@@ -100,7 +106,7 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 					return []
 
 				reportData.append(report)
-			pickle.dump(reportData, open("reportData4.dat", "w"))
+			pickle.dump(reportData, open("reportData7.dat", "wb"), protocol=2)
 		#############################################END DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -164,7 +170,7 @@ def collectRawTrends(username, password, terms, startDt, endDt, savePath=None):
 	if startDt > endDt:
 		print("Error: startDt must come earlier in time than endDt")
 		return []
-	if startDt < datetime.datetime(month=01, day=01, year=2004):
+	if startDt < datetime.datetime(month=1, day=1, year=2004):
 		print("Error: Google Trends does not provide data before 2004, your start date was: "+str(startDt))
 		return []
 	if endDt > datetime.datetime.today():
@@ -251,7 +257,7 @@ def _downloadReport(username, password, terms, startDt, numFiles,
 			query += "%2C"+term
 		query += "&cmpt=q&content=1&export=1&date="+str(month)+"%2F"+str(year)+"%20"+freq
 		
-		print query
+		print(query)
 	
 		data = dloader.downloadReport(query)
 		report.append(data)

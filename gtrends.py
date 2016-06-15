@@ -4,6 +4,10 @@ import csv
 import datetime
 import math
 from fractions import *
+try:
+    import urllib.parse as urllib
+except ImportError:
+    import urllib
 
 from _login import Downloader
 
@@ -262,9 +266,9 @@ def _downloadReport(username, password, terms, startDt, numFiles,
 		#create query
 		query = "http://www.google.com/trends/trendsReport?&q="
 		for term in terms:
-			query += "%2C"+term
-		query += "&geo="+geo+"&cat="+cat+"&gprop="+searchType
-		query += "&cmpt=q&content=1&export=1&date="+str(month)+"%2F"+str(year)+"%20"+freq
+			query += "%2C"+urllib.quote(term)
+		query += "&geo="+urllib.quote(geo)+"&cat="+urllib.quote(cat)+"&gprop="+urllib.quote(searchType)
+		query += "&cmpt=q&content=1&export=1&date="+str(month)+"%2F"+str(year)+"%20"+urllib.quote(freq)
 		
 		print(query)
 	

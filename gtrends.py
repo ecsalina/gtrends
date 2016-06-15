@@ -12,7 +12,7 @@ except ImportError:
 from _login import Downloader
 
 def collectTrends(username, password, terms, startDt, endDt, granularity='d',
-					geo='', cat='', searchType='', tz='', sum=False, savePath=None):
+					geo='', cat='', gprops='', tz='', sum=False, savePath=None):
 	"""
 	Downloads normalized Google trend data between [startDt, endDt).
 
@@ -29,7 +29,7 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 		geo: A string representing a specific country to query.
 			Ex: US, UK, DE, FR, etc.
 		cat: A string representing the specific category code desired.
-		searchType: A string representing the type of search to be included.
+		gprops: A string representing the type of search to be included.
 			Ex: images, news, froogle, and youtube
 		tz: A string representing the desired timezone.
 		sum: Sum values of multiple terms by day/week before normalizing.
@@ -87,7 +87,7 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 		for segTerms in segmentedTerms:
 			#download each 2m file csv as a string
 			rawReport = _downloadReport(username, password, segTerms,
-				startDt, numFiles, countMonth, freq, geo, cat, searchType, tz)
+				startDt, numFiles, countMonth, freq, geo, cat, gprops, tz)
 			#format rawReport into list of each multi-month list.
 			report = _prepTrends(rawReport, startDt, numFiles, countMonth, granularity)
 			#if there is nothing in the report data, then return empty list.
@@ -174,7 +174,7 @@ def collectRawTrends(username, password, terms, startDt, endDt, savePath=None):
 		numYears = endDt.year - startDt.year
 		numMonths = endDt.month - startDt.month
 		numMonths += numYears*12
-		report = _downloadReport(username, password, terms, startDt, endDt, 1, 0, str(numMonths)+"m", geo, cat, searchType, tz)
+		report = _downloadReport(username, password, terms, startDt, endDt, 1, 0, str(numMonths)+"m", geo, cat, gprops, tz)
 		if not report:
 			print("Error: file was unable to be downloaded.")
 			return []
@@ -218,7 +218,7 @@ def _packTerms(terms):
 
 
 def _downloadReport(username, password, terms, startDt, numFiles,
-					countMonth, freq, geo, cat, searchType, tz):
+					countMonth, freq, geo, cat, gprops, tz):
 	"""
 	Helper function to actually downloading Google trend data.
 	Must have a maximum of FIVE terms.
@@ -240,7 +240,7 @@ def _downloadReport(username, password, terms, startDt, numFiles,
 		for term in terms:
 			query += urllib.quote(term)+"%2C"
 		query = query[:-3] #remove final comma
-		query += "&geo="+urllib.quote(geo)+"&cat="+urllib.quote(cat)+"&gprop="+urllib.quote(searchType)
+		query += "&geo="+urllib.quote(geo)+"&cat="+urllib.quote(cat)+"&gprop="+urllib.quote(gprops)
 		query += "&cmpt=q&content=1&export=1&date="+str(month)+"%2F"+str(year)+"%20"+urllib.quote(freq)
 		
 		print(query)

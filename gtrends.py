@@ -15,8 +15,8 @@ cat= category (law & gov, finance, etc. numbered)
 """
 
 
-def collectTrends(username, password, terms, startDt, endDt, granularity='d', geo='', gprop='', news='',
-					sum=False, savePath=None):
+def collectTrends(username, password, terms, startDt, endDt, granularity='d',
+					geo='', cat='', searchType='', tz='', sum=False, savePath=None):
 	"""
 	Downloads normalized Google trend data between [startDt, endDt).
 
@@ -30,6 +30,12 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d', ge
 			Only the month and year are considered.
 		granularity: The frequency with which the data should be spread.
 			This can be: 'd'-> daily, or 'w'-> weekly.
+		geo: A string representing a specific country to query.
+			Ex: US, UK, DE, FR, etc.
+		cat: A string representing the specific category code desired.
+		searchType: A string representing the type of search to be included.
+			Ex: images, news, froogle, and youtube
+		tz: A string representing the desired timezone.
 		sum: Sum values of multiple terms by day/week before normalizing.
 		savePath: A string for the file path where the data can be saved
 
@@ -91,22 +97,24 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d', ge
 		###########DEBBBBUUUUUUUUGGGGGG DEBUG
 		import os.path
 		import pickle
-		if os.path.exists("reportData7.dat"):
-			reportData = pickle.load(open("reportData7.dat", "rb"))
+		if os.path.exists("reportData88888888888.dat"):
+			reportData = pickle.load(open("reportData8.dat", "rb"))
 		else:
 			#normal below
 			for segTerms in segmentedTerms:
 				#download each 2m file csv as a string
-				rawReport = _downloadReport(username, password, segTerms, startDt, numFiles, countMonth, freq)
+				rawReport = _downloadReport(username, password, segTerms,
+					startDt, numFiles, countMonth, freq, geo, cat, searchType, tz)
 				#format rawReport into list of each multi-month list.
 				report = _prepTrends(rawReport, startDt, numFiles, countMonth, granularity)
 				#if there is nothing in the report data, then return empty list.
 				if not report:
-					print("Error: one file was unable to be downloaded.")
+					print("Error: at least one file was unable to be downloaded."
+						" Perhaps your search terms are invalid")
 					return []
 
 				reportData.append(report)
-			pickle.dump(reportData, open("reportData7.dat", "wb"), protocol=2)
+			pickle.dump(reportData, open("reportData8.dat", "wb"), protocol=2)
 		#############################################END DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -234,7 +242,7 @@ def _packTerms(terms):
 
 
 def _downloadReport(username, password, terms, startDt, numFiles,
-					countMonth, freq):
+					countMonth, freq, geo, cat, searchType, tz):
 	"""
 	Helper function to actually downloading Google trend data.
 	Must have a maximum of FIVE terms.
@@ -255,6 +263,7 @@ def _downloadReport(username, password, terms, startDt, numFiles,
 		query = "http://www.google.com/trends/trendsReport?&q="
 		for term in terms:
 			query += "%2C"+term
+		query += "&geo="+geo+"&cat="+cat+"&gprop="+searchType
 		query += "&cmpt=q&content=1&export=1&date="+str(month)+"%2F"+str(year)+"%20"+freq
 		
 		print(query)
@@ -284,6 +293,19 @@ def _prepTrends(rawReport, startDt, numFiles, countMonth, granularity):
 			line = rawLine.split(",")
 			lines.append(line)
 
+		#check if the actual granularity matches the desired granularity. If
+		#no, then alter to match and continue
+		trueGran = lines[4][0]
+		if granularity == "d" and trueGran == "Week":
+			print("Error: The file returned from Google Trends doesn't match your desired granularity."
+				" Altering your desired granularity to match.")
+			granularity = 'w'
+		if granularity == "w" and trueGran == "Day":
+			print("Error: The file returned from Google Trends doesn't match your desired granularity."
+				" Altering your desired granularity to match.")
+			granularity = 'd'
+
+
 		#prep data
 
 		#remove header
@@ -302,7 +324,10 @@ def _prepTrends(rawReport, startDt, numFiles, countMonth, granularity):
 			try:
 
 				if granularity == 'd':
+					print(line[0]) #DEBUG
+					print(type(line[0])) #DEBUG
 					dt = datetime.datetime.strptime(line[0], "%Y-%m-%d")
+					print(dt) #DEBUG
 				else: #granularity == 'w':
 					dt = line[0][:-13]
 					dt = datetime.datetime.strptime(dt, "%Y-%m-%d")
@@ -322,7 +347,6 @@ def _prepTrends(rawReport, startDt, numFiles, countMonth, granularity):
 			except ValueError:
 				print("Value Error: Unable to format datetime correctly from file, returning empty list.")
 				return []
-
 
 		#Checks that there is data. If not, then returns empty list.
 		if len(lines) == 0:

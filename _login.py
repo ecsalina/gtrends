@@ -1,3 +1,4 @@
+import six
 import re
 import logging
 try:
@@ -69,7 +70,12 @@ class Downloader(object):
         """
         Returns original raw csv file as a one large string.
         """
-        data = self.opener.open(query).read().decode()
+        data = self.opener.open(query).read()
+        #This is because in Py3 data is returned as bytes, and we want str
+        #This is an issue when in Py2 data is already an str, and doesn't
+        #have the decode method.
+        if not isinstance(data, six.string_types):
+            data = data.decode()
         
         if data in ['You must be signed in to export data from Google Trends']:
             logging.error('You must be signed in to export data from Google Trends')

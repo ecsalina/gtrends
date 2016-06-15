@@ -11,14 +11,6 @@ except ImportError:
 
 from _login import Downloader
 
-#DEBUG
-"""
-geo= location around world (DE, germany, etc)
-gprop= type of search(news, image, etc) nothing for web
-cat= category (law & gov, finance, etc. numbered)
-"""
-
-
 def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 					geo='', cat='', searchType='', tz='', sum=False, savePath=None):
 	"""
@@ -92,38 +84,19 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 		#queried at once).
 		segmentedTerms = _packTerms(terms)
 		reportData = []
+		for segTerms in segmentedTerms:
+			#download each 2m file csv as a string
+			rawReport = _downloadReport(username, password, segTerms,
+				startDt, numFiles, countMonth, freq, geo, cat, searchType, tz)
+			#format rawReport into list of each multi-month list.
+			report = _prepTrends(rawReport, startDt, numFiles, countMonth, granularity)
+			#if there is nothing in the report data, then return empty list.
+			if not report:
+				print("Error: at least one file was unable to be downloaded."
+					" Perhaps your search terms are invalid")
+				return []
 
-
-
-
-
-
-		###########DEBBBBUUUUUUUUGGGGGG DEBUG
-		import os.path
-		import pickle
-		if os.path.exists("reportData88888888888.dat"):
-			reportData = pickle.load(open("reportData8.dat", "rb"))
-		else:
-			#normal below
-			for segTerms in segmentedTerms:
-				#download each 2m file csv as a string
-				rawReport = _downloadReport(username, password, segTerms,
-					startDt, numFiles, countMonth, freq, geo, cat, searchType, tz)
-				#format rawReport into list of each multi-month list.
-				report = _prepTrends(rawReport, startDt, numFiles, countMonth, granularity)
-				#if there is nothing in the report data, then return empty list.
-				if not report:
-					print("Error: at least one file was unable to be downloaded."
-						" Perhaps your search terms are invalid")
-					return []
-
-				reportData.append(report)
-			pickle.dump(reportData, open("reportData8.dat", "wb"), protocol=2)
-		#############################################END DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
+			reportData.append(report)
 
 		#if, in the same period, between two sets, the added constant
 		#term changes scale, then we must scale the second set to meet
@@ -175,7 +148,7 @@ def collectRawTrends(username, password, terms, startDt, endDt, savePath=None):
 		savePath: A string for the file path where the data can be saved
 
 	Returns:
-		A string representing the downloaded csv.
+		A list of 1 string representing the entire downloaded csv.
 
 	"""
 	#General checks:
@@ -201,8 +174,7 @@ def collectRawTrends(username, password, terms, startDt, endDt, savePath=None):
 		numYears = endDt.year - startDt.year
 		numMonths = endDt.month - startDt.month
 		numMonths += numYears*12
-
-		report = _downloadReport(username, password, terms, startDt, endDt, 1, 0, str(numMonths)+"m")
+		report = _downloadReport(username, password, terms, startDt, endDt, 1, 0, str(numMonths)+"m", geo, cat, searchType, tz)
 		if not report:
 			print("Error: file was unable to be downloaded.")
 			return []
@@ -266,7 +238,8 @@ def _downloadReport(username, password, terms, startDt, numFiles,
 		#create query
 		query = "http://www.google.com/trends/trendsReport?&q="
 		for term in terms:
-			query += "%2C"+urllib.quote(term)
+			query += urllib.quote(term)+"%2C"
+		query = query[:-3] #remove final comma
 		query += "&geo="+urllib.quote(geo)+"&cat="+urllib.quote(cat)+"&gprop="+urllib.quote(searchType)
 		query += "&cmpt=q&content=1&export=1&date="+str(month)+"%2F"+str(year)+"%20"+urllib.quote(freq)
 		
@@ -328,10 +301,7 @@ def _prepTrends(rawReport, startDt, numFiles, countMonth, granularity):
 			try:
 
 				if granularity == 'd':
-					print(line[0]) #DEBUG
-					print(type(line[0])) #DEBUG
 					dt = datetime.datetime.strptime(line[0], "%Y-%m-%d")
-					print(dt) #DEBUG
 				else: #granularity == 'w':
 					dt = line[0][:-13]
 					dt = datetime.datetime.strptime(dt, "%Y-%m-%d")
@@ -457,8 +427,8 @@ def _calcPerc(numFiles, report):
 			newLine.append(dt)
 			for k in range(1, len(report[i][j])):
 				#to avoid divide-by-zero error, set all 0's in data to 1's
-				line[k] = 1.0 if line[k] == 0.0 else line[k]
-				prevLine[k] = 1.0 if prevLine[k] == 0.0 else prevLine[k]
+				line[k] = 1 if line[k] == 0 else line[k]
+				prevLine[k] = 1 if prevLine[k] == 0 else prevLine[k]
 				perc = Fraction(line[k], prevLine[k])
 				newLine.append(perc)
 			percTrend.append(newLine)

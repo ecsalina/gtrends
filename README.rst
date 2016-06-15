@@ -54,7 +54,7 @@ Advanced Usage
 ==============
 Other Specifications
 -----------
-Just like on the Trends site, you can specify the location, category, type of search, and time zone for which you'd like to collect data. These are all strings corresponding to the respective fields "geo," "cat," gprops", and "tz." For example, to get the query data for the term "pizza" in Italy, in the "Food & Drink" category, in the "news" search for Tajikistan Time, I'd type:
+Just like on the Trends site, you can specify the location, category, type of search, and time zone for which you'd like to collect data. These are all strings corresponding to the respective fields ``geo``, ``cat``, ``gprops``, and ``tz``. For example, to get the query data for the term "pizza" in Italy, in the "Food & Drink" category, in the "news" search for Tajikistan Time, I'd type:
 ::
 	trends = gtrends.collectTrends(username, password, terms, startDt, endDt, geo='IT', cat='0-71', gprops='news', tz='Asia/Dushanbe')
 

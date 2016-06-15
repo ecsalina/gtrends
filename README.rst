@@ -60,18 +60,19 @@ Just like on the Trends site, you can specify the location, category, type of se
 
 Note: when you select a type of search (gprops) other than the default, you can only search weekly data. That's just how Google is.
 
-
+Useful Features
+---------------
 Granularity
------------
+~~~~~~~~~~~
 With the optional argument ``granularity``, the granularity can be changed from the default of daily, to weekly. ``granularity`` takes a string of either ``'d'`` or ``'w'`` corresponding to daily or weekly, respectively.
 
 
 Sum
----
+~~~
 ``sum``, is an optional argument of type boolean. With this, the data of multiple terms can be summed together into one column. Default is ``False``.
 
 SavePath
-------------------
+~~~~~~~~
 ``savePath`` takes a string for a path to save the resultant csv. If left as the default ``None``, no file is saved.
 
 Advanced Usage Example

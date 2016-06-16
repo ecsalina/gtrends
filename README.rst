@@ -1,12 +1,14 @@
-New!
-====
-
-Theoretically gtrends now supports python 3.4 and 3.5, as well as 2.7. If there are any issues let me know in the issue tracker! Now read on...
-
-
 =======
 gtrends
 =======
+
+New!
+====
+
+Theoretically gtrends now supports python 3.4 and 3.5, as well as 2.7. You can also specify the geographical location, timezone, category, and type of search desired. If there are any issues let me know in the issue tracker! Now read on...
+
+About
+=====
 
 gtrends is a Python library that eases the process of downloading Google Trend data. `Google Trends <http://www.google.com/trends>`_ is a service offered by Google which allows access to aggregate query volume data for specific search terms, over specific periods of time. This volume data is represented as a fraction of the total query volume on the given day or week.
 
@@ -58,28 +60,14 @@ Data is returned from [startDt, endDt), to the accuracy of the month (i.e. the s
 
 Advanced Usage
 ==============
-Other Specifications
------------
-Just like on the Trends site, you can specify the location, category, type of search, and time zone for which you'd like to collect data. These are all strings corresponding to the respective fields ``geo``, ``cat``, ``gprops``, and ``tz``. For example, to get the query data for the term "pizza" in Italy, in the "Food & Drink" category, in the "news" search for Tajikistan Time, I'd type:
-::
-	trends = gtrends.collectTrends(username, password, terms, startDt, endDt, geo='IT', cat='0-71', gprops='news', tz='Asia/Dushanbe')
-
-Note: when you select a type of search (gprops) other than the default, you can only search weekly data. That's just how Google is.
-
-Useful Features
----------------
 Granularity
-~~~~~~~~~~~
+-----------
 With the optional argument ``granularity``, the granularity can be changed from the default of daily, to weekly. ``granularity`` takes a string of either ``'d'`` or ``'w'`` corresponding to daily or weekly, respectively.
 
 
-Sum
-~~~
-``sum``, is an optional argument of type boolean. With this, the data of multiple terms can be summed together into one column. Default is ``False``.
-
-SavePath
-~~~~~~~~
-``savePath`` takes a string for a path to save the resultant csv. If left as the default ``None``, no file is saved.
+Sum & SavePath
+--------------
+``sum``, is an optional argument of type boolean. With this, the data of multiple terms can be summed together into one column. Default is ``False``.``savePath`` takes a string for a path to save the resultant csv. If left as the default ``None``, no file is saved.
 
 Advanced Usage Example
 ----------------------
@@ -98,9 +86,14 @@ Advanced Usage Example
 	trends = gtrends.collectTrends(username, password, terms, startDt, endDt,
 			granularity='w', sum=True, savePath="myDir/data.csv")
 
-Note
-====
-The data is normalized at the end across all terms (if more than one), such that the largest value in the entire array is set to 100.0. Therefore, all term values are to scale between terms.
+Other Specifications
+-----------
+Just like on the Trends site, you can specify the location, category, type of search, and time zone for which you'd like to collect data. These are all strings corresponding to the respective fields ``geo``, ``cat``, ``gprops``, and ``tz``. For example, to get the query data for the term "pizza" in Italy, in the "Food & Drink" category, in the "news" search for Tajikistan Time, I'd type:
+::
+	trends = gtrends.collectTrends(username, password, terms, startDt, endDt, geo='IT', cat='0-71', gprops='news', tz='Asia/Dushanbe')
+
+Note: when you select a type of search (gprops) other than the default, you can only search weekly data. That's just how Google is.
+
 
 Raw Data
 ========

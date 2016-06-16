@@ -1,3 +1,9 @@
+New!
+====
+
+Theoretically gtrends now supports python 3.4 and 3.5, as well as 2.7. If there are any issues let me know in the issue tracker! Now read on...
+
+
 =======
 gtrends
 =======
@@ -124,7 +130,7 @@ Install via pip with::
 
 Requirements
 ============
-This has so far only been tested on Python 2.7.
+This has so far only been tested on Python 2.7, 3.4, and 3.5.
 
 Issues
 ======

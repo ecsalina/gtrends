@@ -17,7 +17,7 @@ setup(
 	license = "MIT",
 	long_description = long_description,
 	keywords = ['Google', 'Trends', 'API', 'gtrends'],
-
+	install_requires = ['six'],
 	classifiers = [
 		"Development Status :: 5 - Production/Stable",
 		"Intended Audience :: Developers",

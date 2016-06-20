@@ -128,7 +128,7 @@ def collectTrends(username, password, terms, startDt, endDt, granularity='d',
 
 
 
-def collectRawTrends(username, password, terms, startDt, endDt, savePath=None):
+def collectRawTrends(username, password, terms, startDt, endDt, geo='', cat='', gprops='', tz='', savePath=None):
 	"""
 	Downloads raw Google Trends data.
 
@@ -174,7 +174,7 @@ def collectRawTrends(username, password, terms, startDt, endDt, savePath=None):
 		numYears = endDt.year - startDt.year
 		numMonths = endDt.month - startDt.month
 		numMonths += numYears*12
-		report = _downloadReport(username, password, terms, startDt, endDt, 1, 0, str(numMonths)+"m", geo, cat, gprops, tz)
+		report = _downloadReport(username, password, terms, startDt, 1, 0, str(numMonths)+"m", geo, cat, gprops, tz)
 		if not report:
 			print("Error: file was unable to be downloaded.")
 			return []
